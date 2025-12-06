@@ -9,15 +9,13 @@ import platform
 import os
 
 def getPathToBinaryFile():
-    bin_dir = os.path.join("src", "ostov_task", "cmake-build-release")
-    bin_name = "ostov_task"
+    bin_path = os.path.join("src", "ostov_task", "cmake-build-release", "ostov_task")
     if platform.system() == "Windows":
-        bin_name += ".exe"
-    bin_path = os.path.join(bin_dir, bin_name)
+        bin_path = os.path.join("src", "ostov_task.exe")
 
     if not os.path.exists(bin_path):
         raise RuntimeError(f"Бинарник не найден: {bin_path}. Запусти сборку")
-    return bin_path;
+    return bin_path
             
 
 st.title("Поиск остова с максимальным количеством висячих вершин")
