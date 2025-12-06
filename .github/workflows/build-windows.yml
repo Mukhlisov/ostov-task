@@ -25,7 +25,7 @@ jobs:
         run: |
           cmake -S src/ostov_task -B build_cpp -G "Visual Studio 17 2022" -A x64
           cmake --build build_cpp --config Release
-          copy build_cpp\Release\ostov_task.exe src\
+          copy cmake-build-release\ostov_task.exe src\
 
       - name: Build single EXE with PyInstaller
         run: |
