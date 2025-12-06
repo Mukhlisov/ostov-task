@@ -8,10 +8,14 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: cmd
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Python 3.11
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -22,19 +26,19 @@ jobs:
           venv\Scripts\pip install --upgrade pip
           venv\Scripts\pip install streamlit networkx matplotlib pyinstaller
 
-      - name: Build C++ exe (VS2022)
+      - name: Build C++ exe
         run: |
-          cmake -S src/ostov_task -B build_cpp -G "Visual Studio 17 2022" -A x64
+          cmake -S src/ostovost_task -B build_cpp -G "Visual Studio 17 2022" -A x64
           cmake --build build_cpp --config Release
-          # Ищем exe в любом месте, где он может быть
+          echo.
+          echo Ищем ostov_task.exe...
           dir build_cpp /s /b | findstr ostov_task.exe
-          # Копируем оттуда, куда бы он ни упал
           for /r build_cpp %%f in (ostov_task.exe) do copy "%%f" src\ostov_task.exe
           if not exist src\ostov_task.exe (
-            echo [ERROR] C++ exe не найден после сборки!
+            echo [ERROR] C++ exe не найден!
             exit 1
           )
-          echo C++ exe успешно скопирован в src\
+          echo C++ exe успешно скопирован!
 
       - name: Build final single EXE
         run: |
