@@ -117,16 +117,17 @@ unsigned getLeafVerticesNumber(const std::bitset<64> &chosenEdges,
 std::tuple<unsigned, std::bitset<64> > tryFindOstovWithMaxLeafs(
     const std::vector<std::array<int, 2> > &adjacentVertices,
     const std::unordered_map<int, std::vector<int> > &incidentEdges) {
-    const unsigned long range = 1ULL << adjacentVertices.size();
+    
+    const uint64_t range = 1ULL << adjacentVertices.size();
     unsigned maxLeafs = 0;
     std::bitset<64> maxLeafsMask{};
 
-#pragma omp parallel for shared (adjacentVertices, incidentEdges, maxLeafs, maxLeafsMask, range) default(none)
-    for (unsigned long i = 1; i < range; i++) {
+    #pragma omp parallel for shared(adjacentVertices, incidentEdges, maxLeafs, maxLeafsMask, range) default(none)
+    for (long long i = 1; i < (long long)range; i++) {
         const std::bitset<64> mask(i);
         const unsigned leafVerticesNumber = getLeafVerticesNumber(mask, adjacentVertices, incidentEdges);
 
-#pragma omp critical
+        #pragma omp critical
         {
             if (leafVerticesNumber > maxLeafs) {
                 maxLeafs = leafVerticesNumber;
