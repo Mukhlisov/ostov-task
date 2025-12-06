@@ -62,7 +62,7 @@ jobs:
       - name: Upload release
         uses: actions/upload-artifact@v4
         with:
-          name: Windows-Готовый-релиз
+          name: ostov-windows-exe
           path: |
-            dist/Остов с максимум листьев.exe
+            dist/*.exe
             src/ostov_task.exe
