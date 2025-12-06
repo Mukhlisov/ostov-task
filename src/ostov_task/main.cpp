@@ -117,12 +117,12 @@ unsigned getLeafVerticesNumber(const std::bitset<64> &chosenEdges,
 std::tuple<unsigned, std::bitset<64> > tryFindOstovWithMaxLeafs(
     const std::vector<std::array<int, 2> > &adjacentVertices,
     const std::unordered_map<int, std::vector<int> > &incidentEdges) {
-    const uint64_t range = 1ULL << adjacentVertices.size();
+    const unsigned long range = 1ULL << adjacentVertices.size();
     unsigned maxLeafs = 0;
     std::bitset<64> maxLeafsMask{};
 
 #pragma omp parallel for shared (adjacentVertices, incidentEdges, maxLeafs, maxLeafsMask, range) default(none)
-    for (uint64_t i = 1; i < range; i++) {
+    for (unsigned long i = 1; i < range; i++) {
         const std::bitset<64> mask(i);
         const unsigned leafVerticesNumber = getLeafVerticesNumber(mask, adjacentVertices, incidentEdges);
 
@@ -183,7 +183,7 @@ std::tuple<std::vector<std::array<int, 2>>, std::unordered_map<int, std::vector<
 std::vector<std::vector<int> > buildGraph(const std::bitset<64> mask,
                                             const std::vector<std::array<int, 2> > &initialGraph) {
     std::vector<std::vector<int> > resultGraph{};
-    for (size_t i = 0; i < initialGraph.size(); i++) {
+    for (int i = 0; i < initialGraph.size(); i++) {
         if (mask[i] == 1)
             resultGraph.push_back({initialGraph[i][0], initialGraph[i][1]});
     }
