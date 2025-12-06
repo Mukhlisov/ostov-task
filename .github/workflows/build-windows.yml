@@ -55,7 +55,12 @@ jobs:
         run: |
           venv\Scripts\pyinstaller --onefile ^
                                --add-data "src;src" ^
-                               --name "Остов с максимум листьев" ^
+                               --collect-all streamlit ^
+                               --collect-all altair ^
+                               --collect-all PIL ^
+                               --collect-all pandas ^
+                               --collect-all numpy ^
+                               --name "ostov-task" ^
                                --windowed ^
                                src/main.py
 
