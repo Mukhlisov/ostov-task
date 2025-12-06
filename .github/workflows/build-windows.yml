@@ -1,4 +1,4 @@
-name: Build Windows Release
+name: Build Windows One-Click EXE
 
 on:
   push:
@@ -11,37 +11,43 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Setup Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install Python dependencies
+      - name: Install Python packages
         run: |
           python -m venv venv
           venv\Scripts\pip install --upgrade pip
           venv\Scripts\pip install streamlit networkx matplotlib pyinstaller
 
-      - name: Build C++ exe (Visual Studio)
+      - name: Build C++ exe (VS2022)
         run: |
-          cmake -S src/ostov_task -B cmake-build-release -G "Visual Studio 17 2022" -A x64
-          cmake --build cmake-build-release --config Release --target ostov_task
-          dir cmake-build-release\Release
-          copy cmake-build-release\Release\ostov_task.exe src\ostov_task.exe
+          cmake -S src/ostov_task -B build_cpp -G "Visual Studio 17 2022" -A x64
+          cmake --build build_cpp --config Release
+          # Ищем exe в любом месте, где он может быть
+          dir build_cpp /s /b | findstr ostov_task.exe
+          # Копируем оттуда, куда бы он ни упал
+          for /r build_cpp %%f in (ostov_task.exe) do copy "%%f" src\ostov_task.exe
+          if not exist src\ostov_task.exe (
+            echo [ERROR] C++ exe не найден после сборки!
+            exit 1
+          )
+          echo C++ exe успешно скопирован в src\
 
-      - name: Build single EXE with PyInstaller
+      - name: Build final single EXE
         run: |
           venv\Scripts\pyinstaller --onefile ^
                                --add-data "src;src" ^
                                --name "Остов с максимум листьев" ^
                                --windowed ^
-                               --icon=NONE ^
                                src/main.py
 
-      - name: Upload final release
+      - name: Upload release
         uses: actions/upload-artifact@v4
         with:
-          name: Windows-Release-Один-клик
+          name: Windows-Один-клик
           path: |
             dist/Остов с максимум листьев.exe
             src/ostov_task.exe
