@@ -2,7 +2,7 @@ name: Build Windows Release
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -16,16 +16,18 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Python deps
+      - name: Install Python dependencies
         run: |
           python -m venv venv
+          venv\Scripts\pip install --upgrade pip
           venv\Scripts\pip install streamlit networkx matplotlib pyinstaller
 
-      - name: Build C++ exe
+      - name: Build C++ exe (Visual Studio)
         run: |
-          cmake -S src/ostov_task -B build_cpp -G "Visual Studio 17 2022" -A x64
-          cmake --build build_cpp --config Release
-          copy cmake-build-release\ostov_task.exe src\
+          cmake -S src/ostov_task -B cmake-build-release -G "Visual Studio 17 2022" -A x64
+          cmake --build cmake-build-release --config Release --target ostov_task
+          dir cmake-build-release\Release
+          copy cmake-build-release\Release\ostov_task.exe src\ostov_task.exe
 
       - name: Build single EXE with PyInstaller
         run: |
@@ -33,12 +35,13 @@ jobs:
                                --add-data "src;src" ^
                                --name "Остов с максимум листьев" ^
                                --windowed ^
+                               --icon=NONE ^
                                src/main.py
 
-      - name: Upload artifacts
+      - name: Upload final release
         uses: actions/upload-artifact@v4
         with:
-          name: Windows-Release
+          name: Windows-Release-Один-клик
           path: |
             dist/Остов с максимум листьев.exe
             src/ostov_task.exe
