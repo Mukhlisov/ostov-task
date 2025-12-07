@@ -9,9 +9,10 @@ import platform
 import os
 
 def getPathToBinaryFile():
-    bin_path = os.path.join("src", "ostov_task", "cmake-build-release", "ostov_task")
+    bin_folder = os.path.join("src", "ostov_task")
+    bin_path = os.path.join(bin_folder, "linux", "ostov_task")
     if platform.system() == "Windows":
-        bin_path = os.path.join("src", "ostov_task.exe")
+        bin_path = os.path.join(bin_folder, "windows", "ostov_task.exe")
 
     if not os.path.exists(bin_path):
         raise RuntimeError(f"Бинарник не найден: {bin_path}. Запусти сборку")
